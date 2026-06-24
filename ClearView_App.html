@@ -78,7 +78,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .info-val{font-size:12px;color:#ccc;font-weight:500;}
 .info-val.green{color:#4caf50;}
 .info-val.orange{color:#ff9800;}
-.info-val.red{color:#f44336;}
 .metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
 .metric-card{background:#111;border:1px solid #1e1e1e;border-radius:12px;padding:10px 12px;}
 .metric-val{font-size:22px;font-weight:700;color:white;line-height:1.1;}
@@ -90,7 +89,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .det-info{flex:1;}
 .det-name{font-size:12px;color:#ccc;font-weight:500;}
 .det-desc{font-size:10px;color:#444;margin-top:1px;}
-.det-status{font-size:11px;font-weight:600;}
 .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #161616;}
 .toggle-row:last-child{border-bottom:none;}
 .toggle-info{flex:1;}
@@ -109,7 +107,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 input[type=range]{width:100%;accent-color:#2196f3;height:3px;}
 .tank-bar{height:8px;background:#1e1e1e;border-radius:4px;overflow:hidden;margin-top:6px;}
 .tank-fill{height:100%;border-radius:4px;background:#2196f3;transition:width 0.4s;}
-.section-gap{height:6px;}
 </style>
 </head>
 <body>
@@ -117,15 +114,11 @@ input[type=range]{width:100%;accent-color:#2196f3;height:3px;}
   <div class="brand-logo">Clear<span>View</span></div>
   <div class="brand-sub">Interactive prototype &nbsp;·&nbsp; Team Car &nbsp;·&nbsp; DGM 6145</div>
 </div>
-
 <div class="phone">
   <div class="screen">
     <div class="status-bar">
       <span class="status-time">9:41</span>
-      <div class="status-right">
-        <i class="ti ti-wifi"></i>
-        <i class="ti ti-battery-2"></i>
-      </div>
+      <div class="status-right"><i class="ti ti-wifi"></i><i class="ti ti-battery-2"></i></div>
     </div>
     <div class="nav-bar">
       <div class="nav-top">
@@ -134,11 +127,11 @@ input[type=range]{width:100%;accent-color:#2196f3;height:3px;}
       </div>
       <div class="nav-sub" id="nav-sub">Tesla FSD camera monitor</div>
     </div>
-    <div class="content" id="main-content">
+    <div class="content">
       <div class="flow-selector" id="flow-selector">
-        <div class="flow-btn active" onclick="selectFlow(1,this)">Flow 1<br>Manual clean</div>
-        <div class="flow-btn" onclick="selectFlow(2,this)">Flow 2<br>Rain check</div>
-        <div class="flow-btn" onclick="selectFlow(3,this)">Flow 3<br>Auto clean</div>
+        <div class="flow-btn active" onclick="selectFlow(1,this)">Manual<br>clean</div>
+        <div class="flow-btn" onclick="selectFlow(2,this)">Weather<br>check</div>
+        <div class="flow-btn" onclick="selectFlow(3,this)">Auto<br>clean</div>
       </div>
       <div id="flow-area"></div>
     </div>
@@ -152,7 +145,7 @@ input[type=range]{width:100%;accent-color:#2196f3;height:3px;}
 </div>
 
 <script>
-const cams=[
+var cams=[
   {name:'Front',icon:'ti-arrow-up',pct:24,dirty:true},
   {name:'Front-left',icon:'ti-arrow-up-left',pct:91},
   {name:'Front-right',icon:'ti-arrow-up-right',pct:88},
@@ -160,28 +153,23 @@ const cams=[
   {name:'Rear-left',icon:'ti-arrow-down-left',pct:66},
   {name:'Rear-right',icon:'ti-arrow-down-right',pct:80},
   {name:'Left pillar',icon:'ti-arrow-left',pct:93},
-  {name:'Right pillar',icon:'ti-arrow-right',pct:58},
+  {name:'Right pillar',icon:'ti-arrow-right',pct:58}
 ];
 
 function col(p){return p>=80?'#4caf50':p>=60?'#ff9800':'#f44336';}
 
 function camList(overridePct){
-  return cams.map(c=>{
-    const p=(overridePct&&c.dirty)?overridePct:c.pct;
-    const k=col(p);
-    const dc=c.dirty&&!overridePct?' dirty':'';
-    return `<div class="camera-row${dc}">
-      <div class="cam-icon" style="background:${k}18;"><i class="ti ${c.icon}" style="color:${k};font-size:13px;"></i></div>
-      <span class="cam-label">${c.name}</span>
-      <div class="bar-bg"><div class="bar-fg" style="width:${p}%;background:${k};"></div></div>
-      <span class="cam-pct" style="color:${k};">${p}%</span>
-    </div>`;
+  return cams.map(function(c){
+    var p=(overridePct&&c.dirty)?overridePct:c.pct;
+    var k=col(p);
+    var dc=c.dirty&&!overridePct?' dirty':'';
+    return '<div class="camera-row'+dc+'"><div class="cam-icon" style="background:'+k+'18;"><i class="ti '+c.icon+'" style="color:'+k+';font-size:13px;"></i></div><span class="cam-label">'+c.name+'</span><div class="bar-bg"><div class="bar-fg" style="width:'+p+'%;background:'+k+';"></div></div><span class="cam-pct" style="color:'+k+';">'+p+'%</span></div>';
   }).join('');
 }
 
-let flow=1,step=0,currentTab='cameras';
+var flow=1,step=0,currentTab='cameras';
 
-const statuses={
+var statuses={
   '1-0':['FSD Limited','#ff9800','Alex — parked, about to drive'],
   '1-1':['FSD Limited','#ff9800','Cleaning guide'],
   '1-2':['FSD Active','#4caf50','All cameras clear'],
@@ -192,244 +180,95 @@ const statuses={
   '3-0':['FSD Active','#4caf50','Alex — driving with FSD'],
   '3-1':['Cleaning...','#2196f3','Auto-clean in progress'],
   '3-2':['FSD Active','#4caf50','Monitoring resumed'],
-  '3-3':['FSD Limited','#ff9800','Alert dismissed'],
+  '3-3':['FSD Limited','#ff9800','Alert dismissed']
 };
 
-const camScreens={
-  '1-0':()=>`
-    <div class="card"><div class="card-title">Camera status — 8 cameras</div>${camList()}</div>
-    <div class="alert alert-warn">
-      <i class="ti ti-alert-triangle" style="color:#ff9800;"></i>
-      <div class="alert-body"><strong>Front camera dirty</strong>Clarity at 24% — FSD performance reduced.</div>
-    </div>
-    <button class="btn btn-blue" onclick="go(1)"><i class="ti ti-book"></i>View cleaning guide</button>`,
-  '1-1':()=>`
-    <div class="card">
-      <div class="card-title">Cleaning guide — front camera</div>
-      <div class="step-row"><div class="step-circle s-done"><i class="ti ti-check" style="font-size:10px;"></i></div><span class="step-label">Gather microfiber cloth and lens spray</span></div>
-      <div class="step-row"><div class="step-circle s-done"><i class="ti ti-check" style="font-size:10px;"></i></div><span class="step-label">Apply spray to cloth, not directly to lens</span></div>
-      <div class="step-row"><div class="step-circle s-active">3</div><span class="step-label-a">Gently wipe in circular motion</span></div>
-      <div class="step-row"><div class="step-circle">4</div><span class="step-label-d">Buff dry with clean cloth</span></div>
-    </div>
-    <button class="btn btn-blue" onclick="go(2)"><i class="ti ti-refresh"></i>Done — rescan camera</button>`,
-  '1-2':()=>`
-    <div class="alert alert-ok"><i class="ti ti-circle-check" style="color:#4caf50;"></i><div class="alert-body"><strong>Front camera cleared</strong>Clarity restored to 96%.</div></div>
-    <div class="card"><div class="card-title">Updated status</div>${camList(96)}</div>
-    <div class="center" style="padding:10px 0;"><span class="badge badge-on"><i class="ti ti-shield-check" style="font-size:12px;"></i>FSD enabled</span></div>
-    <button class="btn btn-ghost" onclick="reset()">Back to start</button>`,
-  '2-0':()=>`
-    <div class="alert alert-info"><i class="ti ti-cloud-rain" style="color:#2196f3;"></i><div class="alert-body"><strong>Rain detected</strong>Weather may affect camera clarity. Check cameras before enabling FSD.</div></div>
-    <div class="card"><div class="card-title">Camera status</div>${camList()}</div>
-    <button class="btn btn-blue" onclick="go(1)"><i class="ti ti-shield-check"></i>Cameras OK — enable FSD</button>
-    <button class="btn btn-ghost" onclick="go(2)">Show cleaning tip first</button>`,
-  '2-1':()=>`
-    <div class="alert alert-ok"><i class="ti ti-circle-check" style="color:#4caf50;"></i><div class="alert-body"><strong>FSD enabled</strong>All cameras within acceptable range.</div></div>
-    <div class="center" style="padding:12px 0;"><span class="badge badge-on"><i class="ti ti-shield-check" style="font-size:12px;"></i>FSD active</span></div>
-    <div class="card" style="margin-top:10px;"><div class="card-title">Rain monitoring</div>
-      <div class="info-row"><span class="info-key">Check interval</span><span class="info-val">Every 2 min</span></div>
-      <div class="info-row"><span class="info-key">Alert threshold</span><span class="info-val">Below 70%</span></div>
-      <div class="info-row"><span class="info-key">Auto-clean</span><span class="info-val green">Enabled</span></div>
-    </div>
-    <button class="btn btn-ghost" onclick="reset()">Back to start</button>`,
-  '2-2':()=>`
-    <div class="card">
-      <div class="card-title">Quick wipe recommended</div>
-      <p style="font-size:12px;color:#666;line-height:1.6;margin-bottom:10px;">Water droplets reduce clarity over time. A quick wipe before driving helps maintain FSD performance.</p>
-      <div class="step-row"><div class="step-circle s-done"><i class="ti ti-check" style="font-size:10px;"></i></div><span class="step-label">Wipe front and rear cameras</span></div>
-      <div class="step-row"><div class="step-circle s-done"><i class="ti ti-check" style="font-size:10px;"></i></div><span class="step-label">Check side pillar cameras</span></div>
-    </div>
-    <button class="btn btn-blue" onclick="go(1)"><i class="ti ti-shield-check"></i>Done — enable FSD</button>
-    <button class="btn btn-ghost" onclick="go(3)">Skip — drive manually</button>`,
-  '2-3':()=>`
-    <div class="alert alert-caution"><i class="ti ti-steering-wheel" style="color:#ff9800;"></i><div class="alert-body"><strong>Manual driving mode</strong>FSD is off. ClearView continues monitoring in the background.</div></div>
-    <div class="center" style="padding:12px 0;"><span class="badge badge-warn"><i class="ti ti-steering-wheel" style="font-size:12px;"></i>Manual mode</span></div>
-    <button class="btn btn-ghost" onclick="reset()">Back to start</button>`,
-  '3-0':()=>`
-    <div class="center" style="padding:8px 0 12px;"><span class="badge badge-on"><i class="ti ti-shield-check" style="font-size:12px;"></i>FSD active — monitoring</span></div>
-    <div class="alert alert-warn"><i class="ti ti-alert-triangle" style="color:#ff9800;"></i><div class="alert-body"><strong>Front camera visibility reduced</strong>Clarity dropped to 24%. Tap to view details.</div></div>
-    <div class="card"><div class="card-title">Affected camera</div>
-      <div class="camera-row dirty">
-        <div class="cam-icon" style="background:#f4433618;"><i class="ti ti-arrow-up" style="color:#f44336;font-size:13px;"></i></div>
-        <span class="cam-label">Front camera</span>
-        <div class="bar-bg"><div class="bar-fg" style="width:24%;background:#f44336;"></div></div>
-        <span class="cam-pct" style="color:#f44336;">24%</span>
-      </div>
-    </div>
-    <button class="btn btn-blue" onclick="go(1)"><i class="ti ti-droplet"></i>Clean now</button>
-    <button class="btn btn-ghost" onclick="go(3)">Dismiss alert</button>`,
-  '3-1':()=>`
-    <div class="center" style="padding:10px 0 14px;">
-      <div class="big-num" id="cpct">24%</div>
-      <div class="big-lbl">Front camera clarity</div>
-    </div>
-    <div class="card"><div class="card-title">Auto-clean in progress</div>
-      <div class="step-row"><div class="step-circle s-done"><i class="ti ti-check" style="font-size:10px;"></i></div><span class="step-label">Spraying washer fluid</span></div>
-      <div class="step-row"><div class="step-circle s-active" id="s2">2</div><span class="step-label-a">Micro wiper running...</span></div>
-      <div class="step-row"><div class="step-circle" id="s3">3</div><span class="step-label-d">Re-scanning clarity</span></div>
-    </div>
-    <div id="cleannext" class="hidden"><button class="btn btn-blue" onclick="go(2)"><i class="ti ti-check"></i>View result</button></div>`,
-  '3-2':()=>`
-    <div class="alert alert-ok"><i class="ti ti-circle-check" style="color:#4caf50;"></i><div class="alert-body"><strong>Cleaning complete</strong>Front camera clarity restored to 96%.</div></div>
-    <div class="card"><div class="card-title">Front camera</div>
-      <div class="camera-row">
-        <div class="cam-icon" style="background:#4caf5018;"><i class="ti ti-arrow-up" style="color:#4caf50;font-size:13px;"></i></div>
-        <span class="cam-label">Front camera</span>
-        <div class="bar-bg"><div class="bar-fg" style="width:96%;background:#4caf50;"></div></div>
-        <span class="cam-pct" style="color:#4caf50;">96%</span>
-      </div>
-    </div>
-    <div class="center" style="padding:8px 0 10px;"><span class="badge badge-on"><i class="ti ti-shield-check" style="font-size:12px;"></i>FSD continues — all cameras normal</span></div>
-    <button class="btn btn-ghost" onclick="reset()">Back to start</button>`,
-  '3-3':()=>`
-    <div class="alert alert-caution"><i class="ti ti-alert-triangle" style="color:#ff9800;"></i><div class="alert-body"><strong>Alert dismissed</strong>FSD may be limited. ClearView will alert again if clarity drops further.</div></div>
-    <div class="center" style="padding:12px 0;"><span class="badge badge-warn"><i class="ti ti-alert-triangle" style="font-size:12px;"></i>FSD — limited mode</span></div>
-    <button class="btn btn-ghost" onclick="reset()">Back to start</button>`,
-};
+function camScreen(key){
+  if(key==='1-0') return '<div class="card"><div class="card-title">Camera status — 8 cameras</div>'+camList()+'</div><div class="alert alert-warn"><i class="ti ti-alert-triangle" style="color:#ff9800;"></i><div class="alert-body"><strong>Front camera dirty</strong>Clarity at 24% — FSD performance reduced.</div></div><button class="btn btn-blue" onclick="go(1)"><i class="ti ti-book"></i>View cleaning guide</button>';
+  if(key==='1-1') return '<div class="card"><div class="card-title">Cleaning guide — front camera</div><div class="step-row"><div class="step-circle s-done"><i class="ti ti-check" style="font-size:10px;"></i></div><span class="step-label">Gather microfiber cloth and lens spray</span></div><div class="step-row"><div class="step-circle s-done"><i class="ti ti-check" style="font-size:10px;"></i></div><span class="step-label">Apply spray to cloth, not directly to lens</span></div><div class="step-row"><div class="step-circle s-active">3</div><span class="step-label-a">Gently wipe in circular motion</span></div><div class="step-row"><div class="step-circle">4</div><span class="step-label-d">Buff dry with clean cloth</span></div></div><button class="btn btn-blue" onclick="go(2)"><i class="ti ti-refresh"></i>Done — rescan camera</button>';
+  if(key==='1-2') return '<div class="alert alert-ok"><i class="ti ti-circle-check" style="color:#4caf50;"></i><div class="alert-body"><strong>Front camera cleared</strong>Clarity restored to 96%.</div></div><div class="card"><div class="card-title">Updated status</div>'+camList(96)+'</div><div class="center" style="padding:10px 0;"><span class="badge badge-on"><i class="ti ti-shield-check" style="font-size:12px;"></i>FSD enabled</span></div><button class="btn btn-ghost" onclick="reset()">Back to start</button>';
+  if(key==='2-0') return '<div class="alert alert-info"><i class="ti ti-cloud-rain" style="color:#2196f3;"></i><div class="alert-body"><strong>Rain detected</strong>Weather may affect camera clarity. Check cameras before enabling FSD.</div></div><div class="card"><div class="card-title">Camera status</div>'+camList()+'</div><button class="btn btn-blue" onclick="go(1)"><i class="ti ti-shield-check"></i>Cameras OK — enable FSD</button><button class="btn btn-ghost" onclick="go(2)">Show cleaning tip first</button>';
+  if(key==='2-1') return '<div class="alert alert-ok"><i class="ti ti-circle-check" style="color:#4caf50;"></i><div class="alert-body"><strong>FSD enabled</strong>All cameras within acceptable range.</div></div><div class="center" style="padding:12px 0;"><span class="badge badge-on"><i class="ti ti-shield-check" style="font-size:12px;"></i>FSD active</span></div><div class="card" style="margin-top:10px;"><div class="card-title">Weather monitoring</div><div class="info-row"><span class="info-key">Check interval</span><span class="info-val">Every 2 min</span></div><div class="info-row"><span class="info-key">Alert threshold</span><span class="info-val">Below 70%</span></div><div class="info-row"><span class="info-key">Auto-clean</span><span class="info-val green">Enabled</span></div></div><button class="btn btn-ghost" onclick="reset()">Back to start</button>';
+  if(key==='2-2') return '<div class="card"><div class="card-title">Quick wipe recommended</div><p style="font-size:12px;color:#666;line-height:1.6;margin-bottom:10px;">Water droplets reduce clarity over time. A quick wipe before driving helps maintain FSD performance.</p><div class="step-row"><div class="step-circle s-done"><i class="ti ti-check" style="font-size:10px;"></i></div><span class="step-label">Wipe front and rear cameras</span></div><div class="step-row"><div class="step-circle s-done"><i class="ti ti-check" style="font-size:10px;"></i></div><span class="step-label">Check side pillar cameras</span></div></div><button class="btn btn-blue" onclick="go(1)"><i class="ti ti-shield-check"></i>Done — enable FSD</button><button class="btn btn-ghost" onclick="go(3)">Skip — drive manually</button>';
+  if(key==='2-3') return '<div class="alert alert-caution"><i class="ti ti-steering-wheel" style="color:#ff9800;"></i><div class="alert-body"><strong>Manual driving mode</strong>FSD is off. ClearView continues monitoring in the background.</div></div><div class="center" style="padding:12px 0;"><span class="badge badge-warn"><i class="ti ti-steering-wheel" style="font-size:12px;"></i>Manual mode</span></div><button class="btn btn-ghost" onclick="reset()">Back to start</button>';
+  if(key==='3-0') return '<div class="center" style="padding:8px 0 12px;"><span class="badge badge-on"><i class="ti ti-shield-check" style="font-size:12px;"></i>FSD active — monitoring</span></div><div class="alert alert-warn"><i class="ti ti-alert-triangle" style="color:#ff9800;"></i><div class="alert-body"><strong>Front camera visibility reduced</strong>Clarity dropped to 24%. Tap to view details.</div></div><div class="card"><div class="card-title">Affected camera</div><div class="camera-row dirty"><div class="cam-icon" style="background:#f4433618;"><i class="ti ti-arrow-up" style="color:#f44336;font-size:13px;"></i></div><span class="cam-label">Front camera</span><div class="bar-bg"><div class="bar-fg" style="width:24%;background:#f44336;"></div></div><span class="cam-pct" style="color:#f44336;">24%</span></div></div><button class="btn btn-blue" onclick="go(1)"><i class="ti ti-droplet"></i>Clean now</button><button class="btn btn-ghost" onclick="go(3)">Dismiss alert</button>';
+  if(key==='3-1') return '<div class="center" style="padding:10px 0 14px;"><div class="big-num" id="cpct">24%</div><div class="big-lbl">Front camera clarity</div></div><div class="card"><div class="card-title">Auto-clean in progress</div><div class="step-row"><div class="step-circle s-done"><i class="ti ti-check" style="font-size:10px;"></i></div><span class="step-label">Spraying washer fluid</span></div><div class="step-row"><div class="step-circle s-active" id="s2">2</div><span class="step-label-a">Micro wiper running...</span></div><div class="step-row"><div class="step-circle" id="s3">3</div><span class="step-label-d">Re-scanning clarity</span></div></div><div id="cleannext" class="hidden"><button class="btn btn-blue" onclick="go(2)"><i class="ti ti-check"></i>View result</button></div>';
+  if(key==='3-2') return '<div class="alert alert-ok"><i class="ti ti-circle-check" style="color:#4caf50;"></i><div class="alert-body"><strong>Cleaning complete</strong>Front camera clarity restored to 96%.</div></div><div class="card"><div class="card-title">Front camera</div><div class="camera-row"><div class="cam-icon" style="background:#4caf5018;"><i class="ti ti-arrow-up" style="color:#4caf50;font-size:13px;"></i></div><span class="cam-label">Front camera</span><div class="bar-bg"><div class="bar-fg" style="width:96%;background:#4caf50;"></div></div><span class="cam-pct" style="color:#4caf50;">96%</span></div></div><div class="center" style="padding:8px 0 10px;"><span class="badge badge-on"><i class="ti ti-shield-check" style="font-size:12px;"></i>FSD continues — all cameras normal</span></div><button class="btn btn-ghost" onclick="reset()">Back to start</button>';
+  if(key==='3-3') return '<div class="alert alert-caution"><i class="ti ti-alert-triangle" style="color:#ff9800;"></i><div class="alert-body"><strong>Alert dismissed</strong>FSD may be limited. ClearView will alert again if clarity drops further.</div></div><div class="center" style="padding:12px 0;"><span class="badge badge-warn"><i class="ti ti-alert-triangle" style="font-size:12px;"></i>FSD — limited mode</span></div><button class="btn btn-ghost" onclick="reset()">Back to start</button>';
+  return '';
+}
 
 function vehicleTab(){
-  return `
-    <div class="metric-grid">
-      <div class="metric-card"><div class="metric-val" style="color:#4caf50;">78%</div><div class="metric-lbl">Avg clarity</div><div class="metric-sub" style="color:#4caf50;">7 / 8 cameras OK</div></div>
-      <div class="metric-card"><div class="metric-val">12</div><div class="metric-lbl">Cleans today</div><div class="metric-sub" style="color:#555;">Last: 2 min ago</div></div>
-      <div class="metric-card"><div class="metric-val" style="color:#ff9800;">64%</div><div class="metric-lbl">Fluid level</div><div class="metric-sub" style="color:#ff9800;">Refill soon</div></div>
-      <div class="metric-card"><div class="metric-val">247</div><div class="metric-lbl">Total cleans</div><div class="metric-sub" style="color:#555;">Since install</div></div>
-    </div>
-    <div class="card">
-      <div class="card-title">Washer fluid reservoir</div>
-      <div class="info-row"><span class="info-key"><i class="ti ti-droplet" style="color:#2196f3;"></i>Current level</span><span class="info-val orange">64%</span></div>
-      <div class="tank-bar"><div class="tank-fill" style="width:64%;background:#ff9800;"></div></div>
-      <div style="height:10px;"></div>
-      <div class="info-row"><span class="info-key"><i class="ti ti-clock" style="color:#555;"></i>Est. remaining</span><span class="info-val">~180 cleans</span></div>
-      <div class="info-row"><span class="info-key"><i class="ti ti-calendar" style="color:#555;"></i>Last refill</span><span class="info-val">Jun 10, 2026</span></div>
-    </div>
-    <div class="card">
-      <div class="card-title">Vehicle info</div>
-      <div class="info-row"><span class="info-key"><i class="ti ti-car" style="color:#555;"></i>Model</span><span class="info-val">Tesla Model 3</span></div>
-      <div class="info-row"><span class="info-key"><i class="ti ti-cpu" style="color:#555;"></i>FSD version</span><span class="info-val">v13.2.1</span></div>
-      <div class="info-row"><span class="info-key"><i class="ti ti-camera" style="color:#555;"></i>Cameras</span><span class="info-val">8 active</span></div>
-      <div class="info-row"><span class="info-key"><i class="ti ti-tool" style="color:#555;"></i>ClearView</span><span class="info-val green">Installed</span></div>
-    </div>`;
+  return '<div class="metric-grid"><div class="metric-card"><div class="metric-val" style="color:#4caf50;">78%</div><div class="metric-lbl">Avg clarity</div><div class="metric-sub" style="color:#4caf50;">7 / 8 cameras OK</div></div><div class="metric-card"><div class="metric-val">12</div><div class="metric-lbl">Cleans today</div><div class="metric-sub" style="color:#555;">Last: 2 min ago</div></div><div class="metric-card"><div class="metric-val" style="color:#ff9800;">64%</div><div class="metric-lbl">Fluid level</div><div class="metric-sub" style="color:#ff9800;">Refill soon</div></div><div class="metric-card"><div class="metric-val">247</div><div class="metric-lbl">Total cleans</div><div class="metric-sub" style="color:#555;">Since install</div></div></div><div class="card"><div class="card-title">Washer fluid reservoir</div><div class="info-row"><span class="info-key"><i class="ti ti-droplet" style="color:#2196f3;"></i>Current level</span><span class="info-val orange">64%</span></div><div class="tank-bar"><div class="tank-fill" style="width:64%;background:#ff9800;"></div></div><div style="height:10px;"></div><div class="info-row"><span class="info-key"><i class="ti ti-clock" style="color:#555;"></i>Est. remaining</span><span class="info-val">~180 cleans</span></div><div class="info-row"><span class="info-key"><i class="ti ti-calendar" style="color:#555;"></i>Last refill</span><span class="info-val">Jun 10, 2026</span></div></div><div class="card"><div class="card-title">Vehicle info</div><div class="info-row"><span class="info-key"><i class="ti ti-car" style="color:#555;"></i>Model</span><span class="info-val">Tesla Model 3</span></div><div class="info-row"><span class="info-key"><i class="ti ti-cpu" style="color:#555;"></i>FSD version</span><span class="info-val">v13.2.1</span></div><div class="info-row"><span class="info-key"><i class="ti ti-camera" style="color:#555;"></i>Cameras</span><span class="info-val">8 active</span></div><div class="info-row"><span class="info-key"><i class="ti ti-tool" style="color:#555;"></i>ClearView</span><span class="info-val green">Installed</span></div></div>';
 }
+
+var detToggles={img:true,cross:true,ai:true,weather:true,fsdconf:true};
 
 function fsdTab(){
-  const detections=[
-    {icon:'ti-eye',color:'#4caf50',name:'Image clarity analysis',desc:'Blur, haze, water spots, smearing',status:'Active',sc:'green'},
-    {icon:'ti-arrows-diff',color:'#4caf50',name:'Cross-camera comparison',desc:'Visibility differences across cameras',status:'Active',sc:'green'},
-    {icon:'ti-brain',color:'#4caf50',name:'AI obstruction detection',desc:'Mud, droplets, snow, dust, bugs',status:'Active',sc:'green'},
-    {icon:'ti-cloud-rain',color:'#2196f3',name:'Weather & road context',desc:'Rain, snow, wet roads via weather API',status:'Monitoring',sc:''},
-    {icon:'ti-chart-line',color:'#ff9800',name:'FSD confidence drop',desc:'Perception confidence monitoring',status:'Alert',sc:'orange'},
+  var dets=[
+    {key:'img',icon:'ti-eye',color:'#4caf50',bg:'#1a2e1a',name:'Image clarity analysis',desc:'Blur, haze, water spots, smearing'},
+    {key:'cross',icon:'ti-arrows-diff',color:'#4caf50',bg:'#1a2e1a',name:'Cross-camera comparison',desc:'Visibility differences across cameras'},
+    {key:'ai',icon:'ti-brain',color:'#4caf50',bg:'#1a2e1a',name:'AI obstruction detection',desc:'Mud, droplets, snow, dust, bugs'},
+    {key:'weather',icon:'ti-cloud-rain',color:'#2196f3',bg:'#0d1f35',name:'Weather & road context',desc:'Rain, snow, wet roads via weather API'},
+    {key:'fsdconf',icon:'ti-chart-line',color:'#ff9800',bg:'#2a1a00',name:'FSD confidence drop',desc:'Perception confidence monitoring'}
   ];
-  return `
-    <div class="card">
-      <div class="card-title">FSD status</div>
-      <div class="info-row"><span class="info-key"><i class="ti ti-shield-check" style="color:#4caf50;"></i>FSD mode</span><span class="info-val green">Active</span></div>
-      <div class="info-row"><span class="info-key"><i class="ti ti-chart-bar" style="color:#555;"></i>Confidence</span><span class="info-val orange">74% — reduced</span></div>
-      <div class="info-row"><span class="info-key"><i class="ti ti-road" style="color:#555;"></i>Miles today</span><span class="info-val">23.4 mi</span></div>
-      <div class="info-row"><span class="info-key"><i class="ti ti-cloud" style="color:#2196f3;"></i>Weather</span><span class="info-val">Rain — Boston, MA</span></div>
-    </div>
-    <div class="card">
-      <div class="card-title">Detection pipeline — 5 methods</div>
-      ${detections.map(d=>`
-      <div class="det-row">
-        <div class="det-icon" style="background:${d.color}18;"><i class="ti ${d.icon}" style="color:${d.color};font-size:14px;"></i></div>
-        <div class="det-info">
-          <div class="det-name">${d.name}</div>
-          <div class="det-desc">${d.desc}</div>
-        </div>
-        <span class="det-status" style="color:${d.color};">${d.status}</span>
-      </div>`).join('')}
-    </div>`;
+  var rows=dets.map(function(d){
+    var on=detToggles[d.key];
+    return '<div class="det-row"><div class="det-icon" style="background:'+d.bg+';width:38px;height:38px;border-radius:10px;"><i class="ti '+d.icon+'" style="color:'+d.color+';font-size:18px;"></i></div><div class="det-info"><div class="det-name" style="font-size:13px;font-weight:600;color:white;">'+d.name+'</div><div class="det-desc">'+d.desc+'</div></div><div class="toggle '+(on?'on':'off')+'" onclick="toggleDet(\''+d.key+'\')" style="flex-shrink:0;"><div class="toggle-thumb"></div></div></div>';
+  }).join('');
+  return '<div class="card"><div class="card-title">FSD status</div><div class="info-row"><span class="info-key"><i class="ti ti-shield-check" style="color:#4caf50;"></i>FSD mode</span><span class="info-val green">Active</span></div><div class="info-row"><span class="info-key"><i class="ti ti-chart-bar" style="color:#555;"></i>Confidence</span><span class="info-val orange">74% — reduced</span></div><div class="info-row"><span class="info-key"><i class="ti ti-road" style="color:#555;"></i>Miles today</span><span class="info-val">23.4 mi</span></div><div class="info-row"><span class="info-key"><i class="ti ti-cloud" style="color:#2196f3;"></i>Weather</span><span class="info-val">Rain — Boston, MA</span></div></div><div class="card"><div class="card-title">Detection pipeline — 5 methods</div>'+rows+'</div>';
 }
 
-let settings={autoclean:true,raincheck:true,threshold:70,notify:true};
+var settings={autoclean:true,weathercheck:true,threshold:70,notify:true};
 
 function settingsTab(){
-  return `
-    <div class="card">
-      <div class="card-title">Auto-clean</div>
-      <div class="toggle-row">
-        <div class="toggle-info"><div class="toggle-name">Auto-clean while driving</div><div class="toggle-desc">Activates spray + wipe when clarity drops below threshold</div></div>
-        <div class="toggle ${settings.autoclean?'on':'off'}" onclick="toggleSetting('autoclean')"><div class="toggle-thumb"></div></div>
-      </div>
-      <div class="toggle-row">
-        <div class="toggle-info"><div class="toggle-name">Rain detection</div><div class="toggle-desc">Auto-launch camera check when rain is detected</div></div>
-        <div class="toggle ${settings.raincheck?'on':'off'}" onclick="toggleSetting('raincheck')"><div class="toggle-thumb"></div></div>
-      </div>
-      <div class="toggle-row">
-        <div class="toggle-info"><div class="toggle-name">Push notifications</div><div class="toggle-desc">Alert when camera clarity drops below threshold</div></div>
-        <div class="toggle ${settings.notify?'on':'off'}" onclick="toggleSetting('notify')"><div class="toggle-thumb"></div></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">Alert threshold</div>
-      <div class="slider-row">
-        <div class="slider-label">
-          <span class="slider-name">Clarity alert threshold</span>
-          <span class="slider-val" id="thresh-val">${settings.threshold}%</span>
-        </div>
-        <input type="range" min="50" max="90" step="5" value="${settings.threshold}" oninput="updateThreshold(this.value)">
-        <div style="display:flex;justify-content:space-between;margin-top:4px;">
-          <span style="font-size:10px;color:#333;">50% — lenient</span>
-          <span style="font-size:10px;color:#333;">90% — strict</span>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">About</div>
-      <div class="info-row"><span class="info-key">ClearView version</span><span class="info-val">2.1.0</span></div>
-      <div class="info-row"><span class="info-key">Last sync</span><span class="info-val">Today, 9:39 AM</span></div>
-      <div class="info-row"><span class="info-key">Team</span><span class="info-val" style="color:#2196f3;">Team Car</span></div>
-    </div>`;
+  return '<div class="card"><div class="card-title">Auto-clean</div><div class="toggle-row"><div class="toggle-info"><div class="toggle-name">Auto-clean while driving</div><div class="toggle-desc">Activates spray + wipe when clarity drops below threshold</div></div><div class="toggle '+(settings.autoclean?'on':'off')+'" onclick="toggleSetting(\'autoclean\')"><div class="toggle-thumb"></div></div></div><div class="toggle-row"><div class="toggle-info"><div class="toggle-name">Weather detection</div><div class="toggle-desc">Auto-launch camera check when weather conditions are detected</div></div><div class="toggle '+(settings.weathercheck?'on':'off')+'" onclick="toggleSetting(\'weathercheck\')"><div class="toggle-thumb"></div></div></div><div class="toggle-row"><div class="toggle-info"><div class="toggle-name">Push notifications</div><div class="toggle-desc">Alert when camera clarity drops below threshold</div></div><div class="toggle '+(settings.notify?'on':'off')+'" onclick="toggleSetting(\'notify\')"><div class="toggle-thumb"></div></div></div></div><div class="card"><div class="card-title">Alert threshold</div><div class="slider-row"><div class="slider-label"><span class="slider-name">Clarity alert threshold</span><span class="slider-val" id="thresh-val">'+settings.threshold+'%</span></div><input type="range" min="50" max="90" step="5" value="'+settings.threshold+'" oninput="updateThreshold(this.value)"><div style="display:flex;justify-content:space-between;margin-top:4px;"><span style="font-size:10px;color:#333;">50% — lenient</span><span style="font-size:10px;color:#333;">90% — strict</span></div></div></div><div class="card"><div class="card-title">About</div><div class="info-row"><span class="info-key">ClearView version</span><span class="info-val">2.1.0</span></div><div class="info-row"><span class="info-key">Last sync</span><span class="info-val">Today, 9:39 AM</span></div><div class="info-row"><span class="info-key">Team</span><span class="info-val" style="color:#2196f3;">Team Car</span></div></div>';
 }
 
-function toggleSetting(key){
-  settings[key]=!settings[key];
-  renderTab();
-}
-function updateThreshold(v){
-  settings.threshold=parseInt(v);
-  const el=document.getElementById('thresh-val');
-  if(el) el.textContent=v+'%';
-}
+function toggleDet(key){detToggles[key]=!detToggles[key];renderTab();}
+function toggleSetting(key){settings[key]=!settings[key];renderTab();}
+function updateThreshold(v){settings.threshold=parseInt(v);var el=document.getElementById('thresh-val');if(el)el.textContent=v+'%';}
 
-function setNavStatus(key){
-  const st=statuses[key]||['FSD Active','#4caf50','Tesla FSD camera monitor'];
-  const pill=document.getElementById('fsd-pill');
-  pill.innerHTML=`<span style="width:7px;height:7px;border-radius:50%;background:${st[1]};display:inline-block;"></span><span style="color:${st[1]};font-size:11px;font-weight:500;">${st[0]}</span>`;
+function setNav(key){
+  var st=statuses[key]||['FSD Active','#4caf50','Tesla FSD camera monitor'];
+  var pill=document.getElementById('fsd-pill');
+  pill.innerHTML='<span style="width:7px;height:7px;border-radius:50%;background:'+st[1]+';display:inline-block;"></span><span style="color:'+st[1]+';font-size:11px;font-weight:500;">'+st[0]+'</span>';
   document.getElementById('nav-sub').textContent=st[2];
 }
 
 function renderTab(){
-  const mc=document.getElementById('main-content');
-  const fs=document.getElementById('flow-selector');
-  const fa=document.getElementById('flow-area');
+  var fs=document.getElementById('flow-selector');
+  var fa=document.getElementById('flow-area');
   if(currentTab==='cameras'){
-    if(fs) fs.style.display='flex';
-    const key=`${flow}-${step}`;
-    fa.innerHTML=(camScreens[key]||(() =>''))();
-    setNavStatus(key);
+    fs.style.display='flex';
+    var key=flow+'-'+step;
+    fa.innerHTML=camScreen(key);
+    setNav(key);
     if(key==='3-1') animateClean();
   } else if(currentTab==='vehicle'){
-    if(fs) fs.style.display='none';
+    fs.style.display='none';
     fa.innerHTML=vehicleTab();
-    document.getElementById('fsd-pill').innerHTML=`<span style="width:7px;height:7px;border-radius:50%;background:#4caf50;display:inline-block;"></span><span style="color:#4caf50;font-size:11px;font-weight:500;">FSD Active</span>`;
+    var pill=document.getElementById('fsd-pill');
+    pill.innerHTML='<span style="width:7px;height:7px;border-radius:50%;background:#4caf50;display:inline-block;"></span><span style="color:#4caf50;font-size:11px;font-weight:500;">FSD Active</span>';
     document.getElementById('nav-sub').textContent='Vehicle overview';
   } else if(currentTab==='fsd'){
-    if(fs) fs.style.display='none';
+    fs.style.display='none';
     fa.innerHTML=fsdTab();
-    document.getElementById('fsd-pill').innerHTML=`<span style="width:7px;height:7px;border-radius:50%;background:#ff9800;display:inline-block;"></span><span style="color:#ff9800;font-size:11px;font-weight:500;">74% confidence</span>`;
+    var pill=document.getElementById('fsd-pill');
+    pill.innerHTML='<span style="width:7px;height:7px;border-radius:50%;background:#ff9800;display:inline-block;"></span><span style="color:#ff9800;font-size:11px;font-weight:500;">74% confidence</span>';
     document.getElementById('nav-sub').textContent='Detection pipeline';
   } else if(currentTab==='settings'){
-    if(fs) fs.style.display='none';
+    fs.style.display='none';
     fa.innerHTML=settingsTab();
-    document.getElementById('fsd-pill').innerHTML=`<span style="color:#555;font-size:11px;">Settings</span>`;
+    var pill=document.getElementById('fsd-pill');
+    pill.innerHTML='<span style="color:#555;font-size:11px;">Settings</span>';
     document.getElementById('nav-sub').textContent='Preferences & configuration';
   }
 }
 
-function switchTab(tab, el){
+function switchTab(tab,el){
   currentTab=tab;
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
   el.classList.add('active');
   renderTab();
 }
@@ -439,22 +278,22 @@ function reset(){step=0;renderTab();}
 
 function selectFlow(n,el){
   flow=n;step=0;
-  document.querySelectorAll('.flow-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.flow-btn').forEach(function(b){b.classList.remove('active');});
   el.classList.add('active');
   renderTab();
 }
 
 function animateClean(){
-  let p=24;
-  const iv=setInterval(()=>{
+  var p=24;
+  var iv=setInterval(function(){
     p=Math.min(p+9,96);
-    const e=document.getElementById('cpct');if(e)e.textContent=p+'%';
-    if(p>=60){const s=document.getElementById('s2');if(s){s.className='step-circle s-done';s.innerHTML='<i class="ti ti-check" style="font-size:10px;"></i>';}}
-    if(p>=85){const s=document.getElementById('s3');if(s)s.className='step-circle s-active';}
+    var e=document.getElementById('cpct');if(e)e.textContent=p+'%';
+    if(p>=60){var s=document.getElementById('s2');if(s){s.className='step-circle s-done';s.innerHTML='<i class="ti ti-check" style="font-size:10px;"></i>';}}
+    if(p>=85){var s=document.getElementById('s3');if(s)s.className='step-circle s-active';}
     if(p>=96){
       clearInterval(iv);
-      const s=document.getElementById('s3');if(s){s.className='step-circle s-done';s.innerHTML='<i class="ti ti-check" style="font-size:10px;"></i>';}
-      const n=document.getElementById('cleannext');if(n)n.classList.remove('hidden');
+      var s=document.getElementById('s3');if(s){s.className='step-circle s-done';s.innerHTML='<i class="ti ti-check" style="font-size:10px;"></i>';}
+      var n=document.getElementById('cleannext');if(n)n.classList.remove('hidden');
     }
   },300);
 }
